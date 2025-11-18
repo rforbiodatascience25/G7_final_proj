@@ -8,6 +8,8 @@ edtiro: visual
 
 ```{r}
 library("tidyverse")
+library("dplyr")
+library("janitor")
 ```
 
 IF "YOUNG" IN DATA - ELIMINATE
@@ -28,7 +30,6 @@ Rename columns to have standard names
 
 ```{r}
 #| echo: false
-library("janitor")
 dirty_1 <- read_tsv(file = "../data/dirty_data/supp_1.tsv")
 ```
 
@@ -99,8 +100,6 @@ Rename columns so they have more standard names
 
 ```{r}
 #| echo: false
-library("dplyr")
-library("janitor")
 
 dirty_3 <- read_tsv(file = "../data/dirty_data/supp_3.tsv")
 
@@ -124,7 +123,6 @@ Rename columns to have standard names with janitor.
 
 ```{r}
 #| echo: false
-library("janitor")
 
 dirty_5 <- read_tsv(file = "../data/dirty_data/supp_5.tsv")
 
