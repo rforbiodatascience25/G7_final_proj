@@ -8,6 +8,8 @@ edtiro: visual
 
 ```{r}
 library("tidyverse")
+library("dplyr")
+library("janitor")
 ```
 
 IF "YOUNG" IN DATA - ELIMINATE
@@ -31,24 +33,20 @@ Rename columns to have standard names
 dirty_1 <- read_tsv(file = "../data/dirty_data/supp_1.tsv")
 ```
 
-# Cleaning table 2 Louise
-#Want to remove all SD rows
-
-```{r}
-dirty_1_without_ibaq <- dirty_1[ , -c(34:64,67)]
-dirty_1_without_ibaq <- drop_na(dirty_1_without_ibaq)
-nrow(dirty_1_without_ibaq)
-```
-
-
 ```{r}
 clean_1 <- dirty_1 |>
-  select(-c(34:64, 67)) |> 
-  drop_na()  
+  clean_names() |> 
+  select(-c(34:64, 67, 69)) |> 
+  mutate(
+    across(everything(), 
+    ~replace(., is.nan(.), NA))) |>
+  drop_na()
+
 nrow(clean_1)
+view(clean_1)
 ```
 
-# Cleaning table 2
+# Cleaning table 2 Louise
 
 Eliminate standard deviation part.
 
@@ -95,15 +93,13 @@ View(clean_2_cerebellum_development)
 ```
 
 # Cleaning table 3
-Before removing NaN values, the data has: 19,501 entries
-After removing NaN values, the data has: 11,062 entries
+
+Before removing NaN values, the data has: 19,501 entries After removing NaN values, the data has: 11,062 entries
 
 Rename columns so they have more standard names
 
 ```{r}
 #| echo: false
-library("dplyr")
-library("janitor")
 
 dirty_3 <- read_tsv(file = "../data/dirty_data/supp_3.tsv")
 
@@ -117,7 +113,6 @@ clean_3 <- drop_na(
 )  
 ```
 
-
 # Cleaning table 5
 
 Remove PEP, Mol. weight, Protein IDs and Majority Protein IDs.
@@ -128,7 +123,6 @@ Rename columns to have standard names with janitor.
 
 ```{r}
 #| echo: false
-library("janitor")
 
 dirty_5 <- read_tsv(file = "../data/dirty_data/supp_5.tsv")
 
