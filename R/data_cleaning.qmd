@@ -10,7 +10,7 @@ edtiro: visual
 library("tidyverse")
 ```
 
-IF "YOUNG" IN DATA - IGNORE/ELIMINATE
+IF "YOUNG" IN DATA - ELIMINATE
 
 # Cleaning table 1
 
@@ -63,13 +63,31 @@ dirty_3 <- read_tsv(file = "../data/dirty_data/supp_3.tsv")
 
 # Cleaning table 5
 
-Eliminate PEP column and Mol. weight.
+Remove PEP, Mol. weight, Protein IDs and Majority Protein IDs.
 
-Rename columns to have standard names.
+Some gene names have several inside with ";" as a separator, create a row for each.
 
-Remove Protein IDs and Majority Protein IDs
+Rename columns to have standard names with janitor.
 
 ```{r}
 #| echo: false
+library("janitor")
+
 dirty_5 <- read_tsv(file = "../data/dirty_data/supp_5.tsv")
+
+#Deleting columns that we won't be using and renaming existing ones
+#Also dropping duplicate gene_names (keeping the first one)
+
+clean_5 <- dirty_5 |> 
+  select(-contains("young"), -PEP, - `Mol. weight [kDa]`, -`Protein IDs`, -`Majority protein IDs`) |> 
+  clean_names() |> 
+  drop_na() |> 
+  distinct(gene_names, .keep_all = T) 
+
+#This table is with the separated gene names on each column. 
+#"Tidy data" but would mess up our numeric operations. 
+clean_5_separate_gene_names <- clean_5 |> 
+  separate_longer_delim(cols = gene_names, delim = ";")
+
+
 ```
