@@ -10,7 +10,21 @@ edtiro: visual
 library("tidyverse")
 ```
 
+IF "YOUNG" IN DATA - ELIMINATE
+
 # Cleaning table 1
+
+Discard iBAQ.
+
+LFQ intensity is the relative abundance of proteins with one another. Also keep the information on the right side of the table (peptides, etc.).
+
+Clean NA's in protein names.
+
+Figure out how to handle unique names on both gene and protein names.
+
+Eliminate PEP column and Mol. weight.
+
+Rename columns to have standard names
 
 ```{r}
 #| echo: false
@@ -19,6 +33,35 @@ dirty_1 <- read_tsv(file = "../data/dirty_data/supp_1.tsv")
 
 # Cleaning table 2 Louise
 #Want to remove all SD rows
+
+```{r}
+dirty_1_without_ibaq <- dirty_1[ , -c(34:64,67)]
+dirty_1_without_ibaq <- drop_na(dirty_1_without_ibaq)
+nrow(dirty_1_without_ibaq)
+```
+
+
+```{r}
+clean_1 <- dirty_1 |>
+  select(-c(34:64, 67)) |> 
+  drop_na()  
+nrow(clean_1)
+```
+
+# Cleaning table 2
+
+Eliminate standard deviation part.
+
+Keep things on the right too (peptides, etc).
+
+Keep only logLFQ.
+
+Separate data into different tables (isoalted cells, brain regions and cerebellum development)
+
+Eliminate PEP column and Mol. weight.
+
+Rename columns to have standard names
+
 ```{r}
 #| echo: false
 
@@ -52,16 +95,56 @@ View(clean_2_cerebellum_development)
 ```
 
 # Cleaning table 3
+Before removing NaN values, the data has: 19,501 entries
+After removing NaN values, the data has: 11,062 entries
+
+Rename columns so they have more standard names
 
 ```{r}
 #| echo: false
+library("dplyr")
+library("janitor")
+
 dirty_3 <- read_tsv(file = "../data/dirty_data/supp_3.tsv")
+
+#Transforming NaNs into NAs to drop them and cleaning column names
+clean_3 <- drop_na(
+  mutate(
+    clean_names(dirty_3),
+    across(everything(), 
+    ~replace(., is.nan(.), NA))
+  )
+)  
 ```
 
 
 # Cleaning table 5
 
+Remove PEP, Mol. weight, Protein IDs and Majority Protein IDs.
+
+Some gene names have several inside with ";" as a separator, create a row for each.
+
+Rename columns to have standard names with janitor.
+
 ```{r}
 #| echo: false
+library("janitor")
+
 dirty_5 <- read_tsv(file = "../data/dirty_data/supp_5.tsv")
+
+#Deleting columns that we won't be using and renaming existing ones
+#Also dropping duplicate gene_names (keeping the first one)
+
+clean_5 <- dirty_5 |> 
+  select(-contains("young"), -PEP, - `Mol. weight [kDa]`, -`Protein IDs`, -`Majority protein IDs`) |> 
+  clean_names() |> 
+  drop_na() |> 
+  distinct(gene_names, .keep_all = T) 
+
+#This table is with the separated gene names on each column. 
+#"Tidy data" but would mess up our numeric operations. 
+clean_5_separate_gene_names <- clean_5 |> 
+  separate_longer_delim(cols = gene_names, delim = ";")
+
+
 ```
