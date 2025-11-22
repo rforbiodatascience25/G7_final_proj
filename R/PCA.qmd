@@ -12,6 +12,7 @@ library("tidyverse")
 library("pcaMethods")
 library("janitor")
 library("patchwork")
+library("ggrepel")
 ```
 
 # Load data
@@ -64,6 +65,7 @@ NA_percentage
 ## PCA object creation
 
 ```{r}
+#| output: false
 
 brdata <- numerical_brain_regions |> 
   prep(scale = "none", center = T) 
@@ -78,12 +80,22 @@ resPCA <- pca(brdata, method = "svd", center = F, nPcs = 5)
 ## Create PCA plots
 
 ```{r}
-
+#Get the PCA values
 pcaData <- as.data.frame(loadings(resPCA)) |> 
   mutate(region = row.names(loadings(resPCA)))
 
+#Get the % of variability captured by each PC
+PC1var <- resPCA@R2[1] * 100
+PC2var <- resPCA@R2[2] * 100
+
+#Plot!
 pcaData |> 
   ggplot(aes(x = PC1, y = PC2)) +
-  geom_point(aes(color = region)) +
+  geom_point(color = "blue", shape = 19) +
+  geom_label_repel(aes(label = region),
+                   size = 3) +
+  labs(y = paste("Principal component 2 (", PC2var, "% variability )"),
+       x = paste("Principal component 1 (", PC1var, "% variability )"),
+       title = "PCA of proteome by brain region") +
   theme_minimal()
 ```
