@@ -46,7 +46,11 @@ corr_long
 
 ```{r}
 hc <- hclust(as.dist(1 - corr_mat))
-corr_long$rep1 <- factor(corr_long$rep1, levels = hc$labels[hc$order])
+corr_long <- corr_log |>
+  mutate()
+
+
+$rep1 <- factor(corr_long$rep1, levels = hc$labels[hc$order])
 corr_long$rep2 <- factor(corr_long$rep2, levels = hc$labels[hc$order])
 ```
 
