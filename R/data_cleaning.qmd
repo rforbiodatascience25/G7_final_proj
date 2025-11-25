@@ -46,7 +46,7 @@ nrow(clean_1)
 view(clean_1)
 ```
 
-# Cleaning table 2 
+# Cleaning table 2
 
 Eliminate standard deviation part.
 
@@ -88,8 +88,8 @@ clean_2_cerebellum_development <- clean_2 |>
   select(1:2, 18:20, 21:24)
 
 
-View(clean_2)
-View(clean_2_cerebellum_development)
+#View(clean_2)
+#View(clean_2_cerebellum_development)
 ```
 
 # Cleaning table 3
