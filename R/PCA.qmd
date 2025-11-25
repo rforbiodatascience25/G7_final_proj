@@ -19,16 +19,8 @@ library("ggrepel")
 
 ```{r}
 #| warning: false
-#| 
-brain_regions_dirty <- readxl::read_xlsx("../data/_raw/EMS116660-supplement-Table_S17.xlsx", skip = 1)
 
-clean_regions <- brain_regions_dirty |> 
-  clean_names() |> 
-  select(14:23) 
-
-colnames(clean_regions) <- (c("Brainstem", "Cerebellum", "Corpus callosum", "Motor cortex", 
-  "Olfactory bulb", "Optic nerve", "Prefrontal cortex", "Striatum", "Thalamus", 
-  "Hippocampus"))
+clean_regions <- read_tsv(file = "../data/clean_data/clean_17.tsv")
 ```
 
 # Data analysis

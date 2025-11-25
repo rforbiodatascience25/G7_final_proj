@@ -22,6 +22,8 @@ supp_2 <- readxl::read_xlsx(path = "../data/_raw/41593_2015_BFnn4160_MOESM39_ESM
 supp_3 <- readxl::read_xlsx(path = "../data/_raw/41593_2015_BFnn4160_MOESM40_ESM_sup3.xlsx")
 
 supp_5 <- readxl::read_xlsx(path = "../data/_raw/41593_2015_BFnn4160_MOESM42_ESM_sup5.xlsx", skip = 1)
+
+supp_17 <- readxl::read_xlsx("../data/_raw/EMS116660-supplement-Table_S17.xlsx", skip = 1)
 ```
 
 # Creating loaded files with the data
@@ -39,5 +41,5 @@ write_tsv(supp_3, "../data/dirty_data/supp_3.tsv")
 
 write_tsv(supp_5, "../data/dirty_data/supp_5.tsv")
 
-
+write_tsv(supp_17, "../data/dirty_data/supp_17.tsv")
 ```
