@@ -43,7 +43,6 @@ clean_1 <- dirty_1 |>
   drop_na()
 
 nrow(clean_1)
-view(clean_1)
 ```
 
 # Cleaning table 2
@@ -88,8 +87,13 @@ clean_2_cerebellum_development <- clean_2 |>
   select(1:2, 18:20, 21:24)
 
 
+<<<<<<< HEAD
 #View(clean_2)
 #View(clean_2_cerebellum_development)
+=======
+
+
+>>>>>>> 1457629cfb190e10baa90be5e49378d460373ecc
 ```
 
 # Cleaning table 3
