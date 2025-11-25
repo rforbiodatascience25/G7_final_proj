@@ -7,7 +7,42 @@ NA_check <- function(dataframe) {
 }
 
 
-#Log2(x+1) function for tables 3 and 5 for heatmap rna and prot (2C plot)
+# Log2(x+1) function for tables 3 and 5 for heatmap rna and prot (2C plot)
 log2p1 <- function(x) {log2(x + 1)}
 
+
+
+
+# Function for calculating a mean across replicates for specific cell type  
+
+# with this function we replaced this code:
+# prot_for_plot <- clean_5 |>
+#  mutate(across(adult_microglia_1:oligodendrocytes_div4_3, log2p1)) |> # applying log2
+#  rowwise() |> # dplyr function that applies the next function to each row, otherwise it would be applied to columns
+#  mutate( 
+#    prot_microglia   = mean(c_across(starts_with("adult_microglia_")),        na.rm = TRUE), # ignoring missing values
+#    prot_astro       = mean(c_across(starts_with("astrocytes_")),             na.rm = TRUE), # c_across is c(across())
+
+mean_across_col <- function(df, prefixes) {
+  # prefixes : named character vector
+  # c(prot_microglia = "adult_microglia_",
+  # prot_astro     = "astrocytes_")...
+
+  # in prefix vector a value (prefix, old column name start) is stored and a name (new column name)
+  for (new_name in names(prefixes)) { # here we iterate over the names
+    pref <- prefixes[[new_name]] # here we retrieve the prefix string that corresponds to that name
+    
+    df <- df |> 
+      rowwise() |> 
+      mutate(mean_val_temp = mean(c_across(starts_with(pref)), na.rm = TRUE)) |> 
+      ungroup()
+    
+    df[[new_name]] <- df$mean_val_temp
+    
+    # removing the temporary column
+    df$mean_val_temp <- NULL
+  }
+  
+  df
+}
 
