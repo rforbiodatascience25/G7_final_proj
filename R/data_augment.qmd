@@ -1,0 +1,13 @@
+---
+title: "data_augment"
+format: html
+editor: visual
+---
+
+# Augmenting data
+
+## Table 2 - Maria
+
+## Table 3 - Louise
+
+## Table 5 - Renata 
