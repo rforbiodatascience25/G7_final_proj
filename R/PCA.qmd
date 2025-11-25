@@ -1,0 +1,101 @@
+---
+title: "PCA"
+format: html
+editor: visual
+---
+
+# Libraries
+
+```{r}
+#| warning: false
+library("tidyverse")
+library("pcaMethods")
+library("janitor")
+library("patchwork")
+library("ggrepel")
+```
+
+# Load data
+
+```{r}
+#| warning: false
+#| 
+brain_regions_dirty <- readxl::read_xlsx("../data/_raw/EMS116660-supplement-Table_S17.xlsx", skip = 1)
+
+clean_regions <- brain_regions_dirty |> 
+  clean_names() |> 
+  select(14:23) 
+
+colnames(clean_regions) <- (c("Brainstem", "Cerebellum", "Corpus callosum", "Motor cortex", 
+  "Olfactory bulb", "Optic nerve", "Prefrontal cortex", "Striatum", "Thalamus", 
+  "Hippocampus"))
+```
+
+# Data analysis
+
+To re-create the PCA from the paper (Fig. 5A) we searched the pre-installed packages so it would be less of a struggle and found the package "pcaMethods". We followed the vignette to understand how it works and replicate (or improve) results.
+
+## Pre-process data for this specific analysis
+
+```{r}
+
+#Create an object with ONLY numerical data for the PCA object
+numerical_brain_regions <- clean_regions |> 
+  select_if(map_lgl(.x = clean_regions, .f = is.numeric)) |> 
+  remove_empty("rows") #Comepletely empty rows can't be used at all (this is said by checkData, used in the following steps)
+```
+
+## NA check
+
+```{r}
+  
+#In the pcaMethods package there are different methods to analyse the data and handle NA's
+#Different methods allow for different % of missing values, let's check what's the percentage of our NA's:
+
+total_values = nrow(numerical_brain_regions) * ncol(numerical_brain_regions) 
+total_NAs = sum(is.na(clean_regions))
+NA_percentage = (total_NAs/total_values) * 100 
+NA_percentage 
+
+#0% of cells are NAs! 
+#The best method then within the package to do the PCA is "svd"
+
+```
+
+## PCA object creation
+
+```{r}
+#| output: false
+
+brdata <- numerical_brain_regions |> 
+  prep(scale = "none", center = T) 
+
+checkData(brdata, verbose = T)
+#From the package, to see if the data has the appropiate structure
+
+resPCA <- pca(brdata, method = "svd", center = F, nPcs = 5)
+
+```
+
+## Create PCA plots
+
+```{r}
+#Get the PCA values
+pcaData <- as.data.frame(loadings(resPCA)) |> 
+  mutate(region = row.names(loadings(resPCA)))
+
+#Get the % of variability captured by each PC
+PC1var <- resPCA@R2[1] * 100
+PC2var <- resPCA@R2[2] * 100
+
+#Plot!
+pcaData |> 
+  ggplot(aes(x = PC1, y = PC2)) +
+  geom_point(color = "blue", shape = 19) +
+  geom_label_repel(aes(label = region),
+                   size = 3) +
+  labs(y = paste("Principal component 2 (", PC2var, "% variability )"),
+       x = paste("Principal component 1 (", PC1var, "% variability )"),
+       title = "PCA of proteome by brain region") +
+  theme_minimal()
+```

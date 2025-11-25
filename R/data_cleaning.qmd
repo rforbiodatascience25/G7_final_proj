@@ -8,9 +8,11 @@ edtiro: visual
 
 ```{r}
 library("tidyverse")
+library("dplyr")
+library("janitor")
 ```
 
-IF "YOUNG" IN DATA - IGNORE/ELIMINATE
+IF "YOUNG" IN DATA - ELIMINATE
 
 # Cleaning table 1
 
@@ -31,7 +33,20 @@ Rename columns to have standard names
 dirty_1 <- read_tsv(file = "../data/dirty_data/supp_1.tsv")
 ```
 
-# Cleaning table 2
+```{r}
+clean_1 <- dirty_1 |>
+  clean_names() |> 
+  select(-c(34:64, 67, 69)) |> 
+  mutate(
+    across(everything(), 
+    ~replace(., is.nan(.), NA))) |>
+  drop_na()
+
+nrow(clean_1)
+view(clean_1)
+```
+
+# Cleaning table 2 Louise
 
 Eliminate standard deviation part.
 
@@ -41,25 +56,50 @@ Keep only logLFQ.
 
 Separate data into different tables (isoalted cells, brain regions and cerebellum development)
 
-Eliminate PEP column and Mol. weight.
+Eliminate (PEP column?) and Mol. weight.
 
 Rename columns to have standard names
 
 ```{r}
 #| echo: false
-dirty_2 <- read_tsv(file = "../data/dirty_data/supp_2.tsv")
+
+#reading the tsv file
+dirty_2 <-read_tsv(file = "../data/dirty_data/supp_2.tsv")
+
+#checking
+View(dirty_2)
+
+#Want to remove all SD columns (from column nr 21-38), but keep all else
+clean_2 <- dirty_2 |> 
+  select(1:20, 39:40, 42:43)
+
+#3 remaining column headers; Isolated cells, Brain regions, cerebellum development
+
+#Isolated cells table
+clean_2_isolated_cells <- clean_2 |> 
+  select(1:6, 21:24)
+
+#Brain region table
+clean_2_brain_regions <- clean_2 |> 
+  select(1:2, 7:17, 21:24)
+  
+#Cerebellum dev table
+clean_2_cerebellum_development <- clean_2 |>
+  select(1:2, 18:20, 21:24)
+
+
+View(clean_2)
+View(clean_2_cerebellum_development)
 ```
 
 # Cleaning table 3
-Before removing NaN values, the data has: 19,501 entries
-After removing NaN values, the data has: 11,062 entries
+
+Before removing NaN values, the data has: 19,501 entries After removing NaN values, the data has: 11,062 entries
 
 Rename columns so they have more standard names
 
 ```{r}
 #| echo: false
-library("dplyr")
-library("janitor")
 
 dirty_3 <- read_tsv(file = "../data/dirty_data/supp_3.tsv")
 
@@ -75,13 +115,51 @@ clean_3 <- drop_na(
 
 # Cleaning table 5
 
-Eliminate PEP column and Mol. weight.
+Remove PEP, Mol. weight, Protein IDs and Majority Protein IDs.
 
-Rename columns to have standard names.
+Some gene names have several inside with ";" as a separator, create a row for each.
 
-Remove Protein IDs and Majority Protein IDs
+Rename columns to have standard names with janitor.
 
 ```{r}
 #| echo: false
+
 dirty_5 <- read_tsv(file = "../data/dirty_data/supp_5.tsv")
+
+#Deleting columns that we won't be using and renaming existing ones
+#Also dropping duplicate gene_names (keeping the first one)
+
+clean_5 <- dirty_5 |> 
+  select(-contains("young"), -PEP, - `Mol. weight [kDa]`, -`Protein IDs`, -`Majority protein IDs`) |> 
+  clean_names() |> 
+  drop_na() |> 
+  distinct(gene_names, .keep_all = T) 
+
+#This table is with the separated gene names on each column. 
+#"Tidy data" but would mess up our numeric operations. 
+clean_5_separate_gene_names <- clean_5 |> 
+  separate_longer_delim(cols = gene_names, delim = ";")
+
+
+```
+
+# Writing clean data to tables
+
+Table 2 was separated in different ones to make data analysis easier, as not all data is necessary for all further plotting.
+
+```{r}
+dir.create("../data/clean_data", recursive = TRUE, showWarnings = FALSE)
+
+write_tsv(clean_1, "../data/clean_data/clean_1.tsv")
+
+write_tsv(clean_2, "../data/clean_data/clean_2.tsv")
+write_tsv(clean_2_brain_regions, "../data/clean_data/clean_2_brain_regions.tsv")
+write_tsv(clean_2_cerebellum_development, "../data/clean_data/
+          clean_2_cerebellum_development.tsv")
+write_tsv(clean_2_isolated_cells, "../data/clean_data/clean_2_isolated_cells.tsv")
+
+write_tsv(clean_3, "../data/clean_data/clean_3.tsv")
+
+write_tsv(clean_5, "../data/clean_data/clean_5.tsv")
+write_tsv(clean_5_separate_gene_names, "../data/clean_data/clean_5_separate_gene_names.tsv")
 ```
