@@ -3,39 +3,24 @@ title: "2c_plot"
 format: html
 ---
 
-# Plot 2C. The **heatmap between proteome and transcriptome** across cell types.
+# The **heatmap between proteome and transcriptome** across cell types.
 
 ## Loading the data
 
 ```{r}
-dirty_5 <- read_tsv(
-  "../data/dirty_data/supp_5.tsv",
-  skip = 1,          # skipping the first row (states LFQ)
-  col_names = TRUE   # use the second row as header
-)
 ```
 
 ```{r}
-view(dirty_5)
 ```
 
 ```{r}
-clean_5 <- dirty_5 |> 
-  select(-contains("young"), -PEP, - `Mol. weight [kDa]`, -`Protein IDs`, -`Majority protein IDs`) |> 
-  clean_names() |> 
-  drop_na() |> 
-  distinct(gene_names, .keep_all = T) 
-
-#This table is with the separated gene names on each column. 
-#"Tidy data" but would mess up our numeric operations. 
-clean_5_separate_gene_names <- clean_5 |> 
-  separate_longer_delim(cols = gene_names, delim = ";")
-View(clean_5_separate_gene_names)
 ```
 
 ```{r}
 clean_3 <- read_tsv(file = "../data/clean_data/clean_3.tsv", show_col_types = FALSE)
-View(clean_3)
+#View(clean_3)
+clean_5 <- read_tsv(file = "../data/clean_data/clean_5.tsv", show_col_types = FALSE)
+clean_5_separate_gene_names <- read_tsv(file = "../data/clean_data/clean_5_separate_gene_names.tsv", show_col_types = FALSE)
 ```
 
 ```{r}
@@ -54,7 +39,6 @@ log2p1 <- function(x) {log2(x + 1)}
 ```
 
 ```{r}
-#log2p1 <- function(x) {log2(x + 1)}
 
 prot_for_plot <- clean_5 |>
   mutate(across(adult_microglia_1:oligodendrocytes_div4_3, log2p1)) |> # applying log2
@@ -227,12 +211,12 @@ ggplot(corr_df, aes(x = transcriptome, y = proteome, fill = corr)) +
   theme_minimal() +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1),
-    panel.grid = element_blank()
+    panel.grid = element_blank() #no grid lines inside the panel
   ) +
   labs(
     x = "Transcriptome (log2 RPKM)",
     y = "Proteome (log2 LFQ)",
-    fill = "Pearson r"
+    fill = "Pearson correlation"
   )
 
 ```
