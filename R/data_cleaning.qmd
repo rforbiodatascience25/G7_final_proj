@@ -87,6 +87,7 @@ clean_2_cerebellum_development <- clean_2 |>
   select(1:2, 18:20, 21:24)
 
 
+
 # Cleaning table 3
 
 Before removing NaN values, the data has: 19,501 entries After removing NaN values, the data has: 11,062 entries
