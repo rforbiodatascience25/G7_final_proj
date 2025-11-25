@@ -4,48 +4,29 @@ format: html
 edtiro: visual
 ---
 
-# Libraries
+# Libraries & Functions
 
 ```{r}
 library("tidyverse")
 library("dplyr")
 library("janitor")
+
+source("../R/99_proj_func.R")
 ```
 
-IF "YOUNG" IN DATA - ELIMINATE
+# General cleaning guidelines for this project
 
-# Cleaning table 1
+-   Subsetting columns that we're not going to use for this project.
 
-Discard iBAQ.
+-   Cleaning column names with the `janitor` library.
 
-LFQ intensity is the relative abundance of proteins with one another. Also keep the information on the right side of the table (peptides, etc.).
+-   Skip over the first and/or second lines of the excel files. (This is done on `data_loading.qmd` to have the appropiate data structure from the start).
 
-Clean NA's in protein names.
+-   Drop NAs (Check with the NA_check function)
 
-Figure out how to handle unique names on both gene and protein names.
+# Cleaning table 2 + 3
 
-Eliminate PEP column and Mol. weight.
-
-Rename columns to have standard names
-
-```{r}
-#| echo: false
-dirty_1 <- read_tsv(file = "../data/dirty_data/supp_1.tsv")
-```
-
-```{r}
-clean_1 <- dirty_1 |>
-  clean_names() |> 
-  select(-c(34:64, 67, 69)) |> 
-  mutate(
-    across(everything(), 
-    ~replace(., is.nan(.), NA))) |>
-  drop_na()
-
-nrow(clean_1)
-```
-
-# Cleaning table 2
+MAKE THESE COMMENTS LOOK NICER
 
 Eliminate standard deviation part.
 
@@ -90,9 +71,11 @@ clean_2_cerebellum_development <- clean_2 |>
 
 # Cleaning table 3
 
-Before removing NaN values, the data has: 19,501 entries After removing NaN values, the data has: 11,062 entries
+#MAKE THESE COMMENTS LOOK NICER
 
-Rename columns so they have more standard names
+#Before removing NaN values, the data has: 19,501 entries After removing NaN values, the data has: 11,062 entries
+
+#Rename columns so they have more standard names
 
 #| echo: false
 
@@ -110,28 +93,25 @@ clean_3 <- drop_na(
 
 # Cleaning table 5
 
-Remove PEP, Mol. weight, Protein IDs and Majority Protein IDs.
-
-Some gene names have several inside with ";" as a separator, create a row for each.
-
-Rename columns to have standard names with janitor.
-
 ```{r}
 #| echo: false
 
 dirty_5 <- read_tsv(file = "../data/dirty_data/supp_5.tsv")
 
-#Deleting columns that we won't be using and renaming existing ones
-#Also dropping duplicate gene_names (keeping the first one)
+#Dropping duplicate gene_names (keeping the first one)
 
 clean_5 <- dirty_5 |> 
   select(-contains("young"), -PEP, - `Mol. weight [kDa]`, -`Protein IDs`, -`Majority protein IDs`) |> 
   clean_names() |> 
-  drop_na() |> 
   distinct(gene_names, .keep_all = T) 
 
+NA_check(clean_5) #0.32% of the values are NAs. So dropping NAs won't affect our results. 
+
+clean_5 <- clean_5 |> 
+  drop_na()
+
 #This table is with the separated gene names on each column. 
-#"Tidy data" but would mess up our numeric operations. 
+#"Tidy data" but would mess up our numeric operations. Just in case we need it. 
 clean_5_separate_gene_names <- clean_5 |> 
   separate_longer_delim(cols = gene_names, delim = ";")
 
@@ -144,12 +124,16 @@ clean_5_separate_gene_names <- clean_5 |>
 dirty_17 <- read_tsv(file = "../data/dirty_data/supp_17.tsv")
 
 clean_17 <- dirty_17 |> 
-  clean_names() |> 
-  select(14:23) 
+  clean_names() 
 
-colnames(clean_17) <- (c("Brainstem", "Cerebellum", "Corpus callosum", "Motor cortex", 
-  "Olfactory bulb", "Optic nerve", "Prefrontal cortex", "Striatum", "Thalamus", 
-  "Hippocampus"))
+NA_check(clean_17) #17.55% of the data is NAs
+#BUT if an NA check is conducted on the subset that will be used afterwards for the analysis, it doesn't have any NAs!
+
+NA_check(clean_17 |> 
+           select(14:23)) #0% NAs!!
+
+#So for this specific table it was decided that the NA drop can be skipped, since it would only hurt the analysis. 
+
 ```
 
 # Writing clean data to tables
@@ -157,19 +141,24 @@ colnames(clean_17) <- (c("Brainstem", "Cerebellum", "Corpus callosum", "Motor co
 Table 2 was separated in different ones to make data analysis easier, as not all data is necessary for all further plotting.
 
 ```{r}
+#Create directory in case it doesn't exist already 
 dir.create("../data/clean_data", recursive = TRUE, showWarnings = FALSE)
 
 write_tsv(clean_1, "../data/clean_data/clean_1.tsv")
 
 write_tsv(clean_2, "../data/clean_data/clean_2.tsv")
+
 write_tsv(clean_2_brain_regions, "../data/clean_data/clean_2_brain_regions.tsv")
+
 write_tsv(clean_2_cerebellum_development, "../data/clean_data/
           clean_2_cerebellum_development.tsv")
+
 write_tsv(clean_2_isolated_cells, "../data/clean_data/clean_2_isolated_cells.tsv")
 
 write_tsv(clean_3, "../data/clean_data/clean_3.tsv")
 
 write_tsv(clean_5, "../data/clean_data/clean_5.tsv")
+
 write_tsv(clean_5_separate_gene_names, "../data/clean_data/clean_5_separate_gene_names.tsv")
 
 write_tsv(clean_17, "../data/clean_data/clean_17.tsv")
