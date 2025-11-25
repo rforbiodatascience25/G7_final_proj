@@ -23,7 +23,9 @@ source("../R/99_proj_func.R")
 ```{r}
 #| warning: false
 
-clean_regions <- read_tsv(file = "../data/clean_data/clean_17.tsv")
+clean_regions <- read_tsv(file = "../data/clean_data/clean_17.tsv") 
+clean_regions <- clean_regions |> 
+    select(14:23) 
 ```
 
 # Data analysis
