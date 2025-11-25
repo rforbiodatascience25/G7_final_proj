@@ -46,7 +46,7 @@ nrow(clean_1)
 view(clean_1)
 ```
 
-# Cleaning table 2 
+# Cleaning table 2
 
 Eliminate standard deviation part.
 
