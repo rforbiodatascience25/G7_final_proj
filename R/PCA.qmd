@@ -89,7 +89,7 @@ PC1var <- resPCA@R2[1] * 100
 PC2var <- resPCA@R2[2] * 100
 
 #Plot!
-pcaData |> 
+PCA_plot <- pcaData |> 
   ggplot(aes(x = PC1, y = PC2)) +
   geom_point(color = "blue", shape = 19) +
   geom_label_repel(aes(label = region),
@@ -98,4 +98,12 @@ pcaData |>
        x = paste("Principal component 1 (", PC1var, "% variability )"),
        title = "PCA of proteome by brain region") +
   theme_minimal()
+
+PCA_plot
+```
+
+## Save plot
+
+```{r}
+ggsave(filename = "PCA_Plot.jpg", plot = PCA_plot, path = "../results")
 ```
