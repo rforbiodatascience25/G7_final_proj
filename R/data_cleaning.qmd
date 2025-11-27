@@ -33,25 +33,27 @@ source("../R/99_proj_func.R")
 dirty_2 <-read_tsv(file = "../data/dirty_data/supp_2.tsv")
 
 #Keeping the columns needed for the analysis
+
 clean_2 <- dirty_2 |>
   select(
-    gene    = 1,
-    protein = 2,
-    astro   = 3,
-    micro   = 4,
-    neuron  = 5,
-    oligo   = 6
+    gene          = 1,
+    protein       = 2,
+    logLFQ_astro  = 3,
+    logLFQ_micro  = 4,
+    logLFQ_neuron = 5,
+    logLFQ_oligo  = 6
   ) |>
-  slice(-(1:2))      
+  slice(-(1:2)) 
 
 
 clean_2 <- clean_2 |>
   mutate(
-    astro  = as.numeric(astro),
-    micro  = as.numeric(micro),
-    neuron = as.numeric(neuron),
-    oligo  = as.numeric(oligo)
+    logLFQ_astro  = as.numeric(logLFQ_astro),
+    logLFQ_micro  = as.numeric(logLFQ_micro),
+    logLFQ_neuron = as.numeric(logLFQ_neuron),
+    logLFQ_oligo  = as.numeric(logLFQ_oligo)
   )
+
 
 ```
 
