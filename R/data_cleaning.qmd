@@ -24,30 +24,41 @@ source("../R/99_proj_func.R")
 
 -   Drop NAs (Check with the NA_check function)
 
-# Cleaning table 2 + 3
+# Cleaning table 2
 
-MAKE THESE COMMENTS LOOK NICER
+```{r}
+#| echo: false
+#I am Maria and I am proposing this way of cleaning table 2. It is a bit different but at the end it is what makes sense for the figure. I am not deleting the other yet just in case. 
 
-Eliminate standard deviation part.
+dirty_2 <-read_tsv(file = "../data/dirty_data/supp_2.tsv")
 
-Keep things on the right too (peptides, etc).
+#Keeping the columns needed for the analysis
+clean_2 <- dirty_2 |>
+  select(
+    gene    = 1,
+    protein = 2,
+    astro   = 3,
+    micro   = 4,
+    neuron  = 5,
+    oligo   = 6
+  ) |>
+  slice(-(1:2))      
 
-Keep only logLFQ.
 
-Separate data into different tables (isoalted cells, brain regions and cerebellum development)
+clean_2 <- clean_2 |>
+  mutate(
+    astro  = as.numeric(astro),
+    micro  = as.numeric(micro),
+    neuron = as.numeric(neuron),
+    oligo  = as.numeric(oligo)
+  )
 
-Eliminate (PEP column?) and Mol. weight.
-
-Rename columns to have standard names
+```
 
 ```{r}
 #| echo: false
 
-#reading the tsv file
 dirty_2 <-read_tsv(file = "../data/dirty_data/supp_2.tsv")
-
-#checking
-View(dirty_2)
 
 #Want to remove all SD columns (from column nr 21-38), but keep all else
 clean_2 <- dirty_2 |> 
@@ -66,9 +77,11 @@ clean_2_brain_regions <- clean_2 |>
 #Cerebellum dev table
 clean_2_cerebellum_development <- clean_2 |>
   select(1:2, 18:20, 21:24)
+```
 
+# Cleaning table 3
 
-
+```{r}
 # Cleaning table 3
 
 #MAKE THESE COMMENTS LOOK NICER
