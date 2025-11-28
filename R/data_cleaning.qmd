@@ -84,26 +84,44 @@ clean_2_cerebellum_development <- clean_2 |>
 # Cleaning table 3
 
 ```{r}
-# Cleaning table 3
-
-#MAKE THESE COMMENTS LOOK NICER
-
-#Before removing NaN values, the data has: 19,501 entries After removing NaN values, the data has: 11,062 entries
-
-#Rename columns so they have more standard names
-
 #| echo: false
 
-dirty_3 <- read_tsv(file = "../data/dirty_data/supp_3.tsv")
+dirty_3 <- read_tsv(file = "../data/dirty_data/supp_3.tsv", show_col_types = FALSE)
 
+#Janitor
+clean_3 <- dirty_3 |>
+  clean_names()
+
+#Moving gene name to the front
+clean_3 <- clean_3 |>
+  relocate(gene_name)
+
+#Checking NAs
+print(
+  paste("The total % of NA values are: ", round(NA_check(clean_3), 2))
+)
+```
+
+```{r}
 #Transforming NaNs into NAs to drop them and cleaning column names
-clean_3 <- drop_na(
-  mutate(
-    clean_names(dirty_3),
-    across(everything(), 
-    ~replace(., is.nan(.), NA))
-  )
-)  
+clean_3 <- clean_3 |>
+  mutate(across(everything(),
+                ~ replace(., is.nan(.), NA))) |>
+           drop_na()
+
+#Important note on removing NAs:
+#NAs compose 22.64% of the total values, however drop_na() removes ANY rows containing NAs
+#Therefore a substantial data loss is obtained and data analysis should be conducted with caution
+
+rows_in_dirty <- nrow(dirty_3) #19501 entries
+rows_in_clean <- nrow(clean_3) #11062 entries
+
+
+pct_lost <- (rows_in_dirty - rows_in_clean) / rows_in_dirty *100
+
+print(
+  paste("The total % of lost rows are", round(pct_lost, 2))
+)
 ```
 
 # Cleaning table 5
