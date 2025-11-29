@@ -4,6 +4,8 @@ format: html
 editor: visual
 ---
 
+The expression data used in this project was retrieved from Supplementary tables 1, 2, 3, 5, and 17 of [*(Sharma et. al, 2015)*](https://www.nature.com/articles/nn.4160#Sec12)*.* Tables 1, 2, 5, and 17 collect protein expression data normalized as log LFQ intensity, a metric used to compare the abundance of the **same protein** across multiple samples or conditions.
+
 # Data 2 - Maria
 
 # Data 3 - Louise
@@ -15,9 +17,9 @@ clean_5 <- read_tsv(file = "../data/clean_data/clean_5.tsv", show_col_types = FA
 head(clean_5)
 ```
 
-The clean_5 data frame contains protein expression data of cultured cell types per individual replicate. The data is expressed in log LFQ intensity, a metric used to compare the abundance of the **same protein** across multiple samples or conditions. This relative measure allows us to both validate our replicates, and to determine the preferential expression of each cultured cell type.
+The clean_5 data frame contains protein expression data of cultured cell types per individual replicate. This relative measure allows us to both validate our replicates, and to determine the preferential expression of each cultured cell type.
 
-For these goals, we are interested only in columns 1-29, while we can discard information about sequence coverage, molecular weight, and protein IDs.
+For these goals, we are interested only in columns 1-26, while we can discard information about sequence coverage, molecular weight, and protein IDs.
 
 ```{r}
 view(clean_5)
