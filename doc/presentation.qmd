@@ -1,5 +1,6 @@
 ---
-title: "presentation"
+title: "Group 7 Final project"
+subtitle: "Cell-type and brain region-resolved mouse proteome"
 format:
   revealjs:
     fig-format: png
@@ -54,7 +55,7 @@ sampletext
 
 sampletext
 
-## Angel
+## Principal Component Analysis
 
 ```{r}
 #| warning: false
@@ -102,9 +103,16 @@ PCA_plot <- pcaData |>
        title = "PCA of proteome by brain region") +
   theme_minimal()
 
+```
+
+```{r}
 PCA_plot
 ```
 
 # Conclusion
 
-Angel
+-   Together, our figures tell one story: the mouse brain is built from a shared core proteome that is tuned in each cell type and region to perform very specific tasks
+
+-   The transcriptome–proteome comparisons show that mRNA alone cannot capture this tuning, while the PCA across regions reveals that even at a global scale, protein expression maps neatly onto brain anatomy
+
+-   Our marker and enrichment plots then zoom in to show how relatively few but strongly enriched proteins at the cell surface and synapse give astrocytes, neurons, microglia and oligodendrocytes their distinct molecular fingerprints and interactions
