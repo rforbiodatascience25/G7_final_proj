@@ -10,6 +10,15 @@ editor: visual
 
 # Data 5 - Renata & Marianna
 
+```{r}
+clean_5 <- read_tsv(file = "../data/clean_data/clean_5.tsv", show_col_types = FALSE)
+head(clean_5)
+```
+
+The clean_5 data frame contains protein expression data of cultured cell types per individual replicate. The data is expressed in log LFQ intensity, a metric used to compare the abundance of the **same protein** across multiple samples or conditions. This relative measure allows us to both validate our replicates, and to determine the preferential expression of each cultured cell type.
+
+For these goals, we are interested only in columns 1-29, while we can discard information about sequence coverage, molecular weight, and protein IDs.
+
 # Data 17 - Angel
 
 ```{r}
