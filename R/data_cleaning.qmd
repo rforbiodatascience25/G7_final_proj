@@ -134,7 +134,7 @@ dirty_5 <- read_tsv(file = "../data/dirty_data/supp_5.tsv")
 #Dropping duplicate gene_names (keeping the first one)
 
 clean_5 <- dirty_5 |> 
-  select(-contains("young"), -PEP, - `Mol. weight [kDa]`, -`Protein IDs`, -`Majority protein IDs`) |> 
+  select(-contains("young"), -PEP, - `Mol. weight [kDa]`, -`Protein IDs`, -`Majority protein IDs`, -`Sequence coverage [%]`) |> 
   clean_names() |> 
   distinct(gene_names, .keep_all = T) 
 
