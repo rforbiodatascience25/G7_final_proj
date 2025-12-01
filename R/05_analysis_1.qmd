@@ -1,31 +1,36 @@
 ---
-title: "fig1e_louise"
+title: "Density_plot"
 format: html
 editor: visual
 ---
 
-## Replicating figure 1e from article
-
-Heres some info on the figure (from article):\
-*"RNA-Seq analysis of cultured cells and resulting density plots of gene expression levels. The density estimates of gene expression levels are shown for each cell type and for a combination over all cell types as indicated. The combined cell type was derived by extracting the largest expression value over all cell types. In all cell types, gene expression levels followed a binomial distribution (black). Gene expression filtered for RPKM \> 1 values are shown in blue"*
-
-![](images/clipboard-2755963945.png)
-
-Heres my script for the analysis
+# Density plot
 
 ```{r}
 library(tidyverse)
 ```
 
-Notes:
+##### Important notes
 
--   Data in figure 1e is from supp table 3
+-   The data is extracted from supplementary table 3
 
--   Data is log2 transformed
+    -   The dataset has been cleaned + augmented prior to this script
 
--   There are 5 classes of column names:
+    -   All data within RPKM columns is already log2 transformed
 
-    -   Oligodendrocytes (div1.1-1.3 + dic 2.5 1-3 + div 4 1-3)
+    -   Means of cell type specific gene expression is already calculated and stored within RNA columns
+
+-   There are 3 overall classes of column names:
+
+    -   Gene name
+
+    -   Cell type
+
+    -   RNA mean
+
+-   Within the cell type category, the following cells are stored
+
+    -   Oligodendrocytes (div1_1-1_3 + div 2_5 1-3 + div 4 1-3)
 
     -   Adult microglia 1-3
 
@@ -33,141 +38,246 @@ Notes:
 
     -   Cortical neurons div05 (1-3) + dig 10 (1-3)
 
-    -   GeneName
+-   RPKM (reads per kilobase of transcript per million mapped reads) is the unit used to measure gene expression of RNA
 
 ```{r}
 getwd()
 
 #Going back 1 step to open the file
-rna_data <- read_tsv("../data/dirty_data/supp_3.tsv", show_col_types = FALSE)
+rna_wide <- read_tsv("../data/augmented_data/table_3_log_means.tsv", show_col_types = FALSE)
 
 #Checking the data again
-#summary(rna_data)
-
-#Removing NA's
-rna_data <- rna_data %>% 
-  drop_na()
-
-colnames(rna_data)
-head(rna_data, 10)
+#colnames(rna_data)
+#View(rna_data)
 ```
 
 Data is read. Steps now:
 
-1\) Locate X and Y values (X=log2 RPKM, Y=density of these measurements, generated during ggplot)
+1.  Create a combined column, containing max RPKM across cell types
 
-2\) Choose specific columns to use
+2.  Tidy dataset (from wide –\> long)
 
-3\) Consider tidying the data more (from wide to long format (--\> make col names: Gene Name, Cell type, RPKM), using pivot_longer())
+3.  Group cells into 5 groups (cell types + combined)
 
-4\) Log2 transform values (calculate + add additional column for this)
+4.  Assess number of unique genes (per cell type)
 
-5\) Make plot using ggplot2
+5.  Split data (4 cell types + combined)
 
-## Step 3: Tidying data
+6.  Plot using ggplot (4 cell types + combined)
 
-```{r}
-#First: Tidying the data
-#Combining cell types across divisions, using pivot_longer
-rna_long <- rna_data %>%
-  pivot_longer(
-    cols = starts_with("RPKM"),
-    names_to = "Cell_Type",
-    values_to = "RPKM"
-  )
-
-colnames(rna_long)
-glimpse(rna_long, 10)
-print(rna_long)
-
-#Saving tidy data in .tsv format
-write_tsv(rna_long, "../data/fig1e_rna_long.tsv")
-```
-
-Inspecting the data, maybe more clean-up?\
-Or plot using parts of the name
-
-![](images/clipboard-2660787534.png)
+## Step 1: Adding max RPKM values
 
 ```{r}
-#Additional clean-up of row names (cell types)
-#Saving as new data
-rna_long_clean <- rna_long %>% 
+rna_wide <- rna_wide |>
   mutate(
-    Cell_Type = case_when(
-      str_detect(Cell_Type, "Oligodendrocytes") ~ "Oligodendrocytes",
-      str_detect(Cell_Type, "Astrocytes") ~ "Astrocytes",
-      str_detect(Cell_Type, "microglia") ~ "Microglia",
-      str_detect(Cell_Type, "neurons") ~ "Neurons",
-      TRUE ~ "Other"
+    rna_combined = pmax(
+      rna_oligo_div1, rna_oligo_div2_5, rna_oligo_div4,
+      rna_microglia, rna_astro,
+      rna_neuron_div5, rna_neuron_div10
     )
   )
-
-head(rna_long_clean)
-
-#Checking for "Other" catagory
-rna_long_clean %>% 
-  count(Cell_Type)
-#None in other!
-
-
-#Saving new tidy data in .tsv format
-write_tsv(rna_long_clean, "../data/fig1e_rna_long_clean.tsv")
 ```
 
-## Step 4: Log2 transform tidy data
+## Step 2: Tidying dataset
 
 ```{r}
-#Adding extra column with log2 values in tidy dataset
-rna_long_clean <- rna_long_clean %>% 
-  mutate(log2_RPKM = log2(RPKM)) 
+rna_long <- rna_wide |>
+  select(gene_name, starts_with("rna_")) |>
+  pivot_longer(
+    cols = starts_with("rna_"),
+    names_to = "cell_type",
+    values_to = "log2_rpkm"
+  )
 
-
-colnames(rna_long_clean)
+#Checking
+#View(rna_long)
+#The data is now tidy!
 ```
 
-## Step 5: Make density plot
+## Step 3: Group cells
 
 ```{r}
-#Using ggplo2 (tidyverse)
+rna_grouped <- rna_long |>
+  mutate(
+    cell_group = case_when(
+      str_detect(cell_type, "oligo")    ~ "Oligodendrocytes",
+      str_detect(cell_type, "neuron")   ~ "Neurons",
+      str_detect(cell_type, "astro")    ~ "Astrocytes",
+      str_detect(cell_type, "microglia")~ "Microglia",
+      str_detect(cell_type, "combined") ~ "Combined",
+      TRUE ~ NA_character_
+    )
+  ) |>
+  filter(!is.na(cell_group))
 
-fig1e <- ggplot(rna_long_clean, 
-                aes(x = log2_RPKM, color = Cell_Type)) +
-  geom_density() + 
+#Assessing the data
+#View(rna_grouped)
+```
+
+## Step 4: Assess unique and repetitive gene counts
+
+```{r}
+#Checking if genes appear several times within the dataset
+#(how many rows within the rna_grouped dataset have the combination of cell + gene)
+count_per_gene <- rna_grouped %>% 
+  count(cell_group, gene_name) %>% 
+  filter(n > 1)
+
+#Display as range:
+count_per_gene_summary <- count_per_gene %>% 
+  group_by(cell_group) %>% 
+  summarise(
+    min_n = min(n),
+    max_n = max(n),
+    .groups = "drop" #drop group after analysis
+  )
+  
+#Extracting to a printable format
+count_per_gene_summary %>% 
+  rowwise() %>% 
+  mutate(msg = paste0(cell_group, ": Counts per gene ranges from ", min_n, " to ", max_n)) %>% 
+  pull(msg) %>% 
+  cat(sep = "\n")
+```
+
+### Saving unique counts
+
+```{r}
+# 4) Unique genes per cell_group (for counts)
+rna_unique <- rna_grouped |>
+  distinct(cell_group, gene_name, .keep_all = TRUE)
+
+n_all <- rna_unique |>
+  count(cell_group, name = "n_all")
+
+n_subset <- rna_unique |>
+  filter(log2_rpkm >= 1) |>
+  count(cell_group, name = "n_subset")
+
+n_counts <- n_all |>
+  left_join(n_subset, by = "cell_group")
+```
+
+## Step 5: Split data
+
+Done to enable separate plotting
+
+```{r}
+#All cell specific values
+rna_all_main <- rna_grouped |>
+  filter(cell_group != "Combined")
+
+#Extracted values above the threshold of RPKM >= 1:
+rna_sub_main <- rna_all_main |>
+  filter(log2_rpkm >= 1)
+
+#Combined cell values
+rna_all_combined <- rna_grouped |>
+  filter(cell_group == "Combined")
+
+#Extract ones above the threshold
+rna_sub_combined <- rna_all_combined |>
+  filter(log2_rpkm >= 1)
+
+#Count corresponding values
+n_counts_main <- n_counts |>
+  filter(cell_group != "Combined")
+
+n_counts_combined <- n_counts |>
+  filter(cell_group == "Combined")
+```
+
+Output: Total number of genes, compared to number of genes within the subset (above the threshold)
+
+```{r}
+n_counts_main
+```
+
+```{r}
+n_counts_combined
+```
+
+## Step 6: Plots
+
+#### Saving x axis values
+
+```{r}
+#Defining a shared x axis
+x_scale <- scale_x_continuous(
+  limits = c(-5, 17),
+  breaks = seq(-5, 15, by = 5)
+)
+```
+
+### Cell type specific plot
+
+```{r}
+plot_celltypes <- ggplot() +
+  geom_density(
+    data = rna_all_main,
+    aes(x = log2_rpkm, group = cell_group),
+    color = "black"
+  ) +
+  geom_density(
+    data = rna_sub_main,
+    aes(x = log2_rpkm, group = cell_group),
+    color = "blue"
+  ) +
+  facet_wrap(~ cell_group, nrow = 2, ncol = 2) +
+  x_scale +
   labs(
     title = "Gene expression levels (RNA) per Cell Type",
-    x = expression("RPKM (log"["2"]*")"),
+    x = expression("RPKM (log"[2]*")"),
     y = "Density"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  geom_text(
+    data = n_counts_main,
+    aes(x = 10, y = 0.19, label = format(n_all, big.mark = ",")),
+    hjust = 1, vjust = 1, color = "black", size = 3
+  ) +
+  geom_text(
+    data = n_counts_main,
+    aes(x = 10, y = 0.17, label = format(n_subset, big.mark = ",")),
+    hjust = 1, vjust = 1, color = "blue", size = 3
+  )
 
-fig1e
-
-ggsave("../results/figure1e.png", fig1e)
-
-#TOO MANY ROWS REMOVED!
-summary(rna_long_clean$log2_RPKM)
-table(is.finite(rna_long_clean$log2_RPKM))
-
-table(rna_long_clean$RPKM == 0) # No 0 RPKM values
-
-summary(rna_data) #HEREs the reason, NAs were not proberly removed during prior clean-up
+plot_celltypes
+ggsave("../results/RNA_density_plot_celltype.png", plot_celltypes, dpi = 300)
 ```
 
-### Refining the plot
+### Combined plot
 
 ```{r}
-#Plotting individually per cell type
-ggplot(rna_long_clean,
-       aes(x = log2_RPKM)) + 
-  geom_density() + 
-  facet_wrap(~ Cell_Type) + 
+plot_combined <- ggplot() +
+  geom_density(
+    data = rna_all_combined,
+    aes(x = log2_rpkm),
+    color = "black"
+  ) +
+  geom_density(
+    data = rna_sub_combined,
+    aes(x = log2_rpkm),
+    color = "blue"
+  ) +
+  x_scale +
   labs(
-    title = "Gene expression levels (RNA) per Cell Type",
-    x = expression("RPKM (log"["2"]*")"),
+    title = "Combined cell types",
+    x = expression("RPKM (log"[2]*")"),
     y = "Density"
-  ) + 
-  theme_minimal()
-```
+  ) +
+  theme_minimal() +
+  geom_text(
+    data = n_counts_combined,
+    aes(x = 10, y = 0.19, label = format(n_all, big.mark = ",")),
+    hjust = 1, vjust = 1, color = "black", size = 3
+  ) +
+  geom_text(
+    data = n_counts_combined,
+    aes(x = 10, y = 0.17, label = format(n_subset, big.mark = ",")),
+    hjust = 1, vjust = 1, color = "blue", size = 3
+  )
 
-## CHANGE PLOT - TAKE THE MEAN OF EACH TRIPLICETTE
+plot_combined
+ggsave("../results/RNA_density_plot_combined.png", plot_celltypes, dpi = 300)
+```
