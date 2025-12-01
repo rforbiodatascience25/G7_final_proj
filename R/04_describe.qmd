@@ -35,7 +35,7 @@ When computing the proportion of zeros, we realize that our data contains no cel
 ```{r}
 clean_2 <- read_tsv(file = "../data/clean_data/clean_2.tsv", show_col_types = FALSE)
 
-# 1) Calculate proportion of zeros in each numeric column
+# Calculate proportion of zeros in each numeric column
 zeros <- clean_2 |> 
   select(where(is.numeric)) |> 
   summarise(across(everything(), ~ mean(.x == 0, na.rm = TRUE)))
