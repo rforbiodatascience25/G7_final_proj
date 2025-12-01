@@ -49,9 +49,6 @@ sampletext
 
 ## Correlation Heatmap
 
-![](images/Heatmap_tr_prt.jpg)
-
-
 ```{r}
 prot_one_gene <- aug_5 |> 
   mutate(gene_name = str_split(gene_name, ";") |> map_chr(1))
