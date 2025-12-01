@@ -3,6 +3,7 @@ title: "Group 7 Final project"
 subtitle: "Cell-type and brain region-resolved mouse proteome"
 format:
   revealjs:
+    slide-number: true
     fig-format: png
     execute:
       fig-device: ragg_png
@@ -35,7 +36,9 @@ Marianna
 
 -   This shows blablabla
 
-![](images/clipboard-1185996237.png)
+![](images/clipboard-1002329297.png)
+
+![](images/clipboard-3719894856.png)
 
 ## Marianna
 
