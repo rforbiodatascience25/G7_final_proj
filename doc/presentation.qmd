@@ -35,9 +35,7 @@ Marianna
 
 -   This shows blablabla
 
-![](images/clipboard-1002329297.png)
-
-![](images/clipboard-3719894856.png)
+![](images/clipboard-1185996237.png)
 
 ## Marianna
 
@@ -242,7 +240,7 @@ PCA_plot
 
 ## Rank-Rank analysis across data types
 
-![](images/Screenshot 2025-12-01 at 20.32.47.png){width="506"}
+![](images/Screenshot%202025-12-01%20at%2020.32.47.png){width="506"}
 
 ## Conclusion
 
