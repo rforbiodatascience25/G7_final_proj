@@ -74,35 +74,42 @@ missing
 
 # Data 3
 
-##### Important notes
+The data from table 3 is a RNA sequence expression matrix, containing RPKM values for RNA transcriptome data. The data is obtained from purified mouse brain cell types. The `clean_3` data frame contains 11.062 gene entries, across 21 different cell type samples.
 
--   The data is extracted from supplementary table 3
+```{r}
+clean_3 <- read_tsv(file = "../data/clean_data/clean_3.tsv", show_col_types = FALSE)
 
-    -   The dataset has been cleaned + augmented prior to this script
+dirty_3 <- read_tsv(file = "../data/dirty_data/supp_3.tsv", show_col_types = FALSE)
+#colnames(clean_3)
+#dim(clean_3)
 
-    -   All data within RPKM columns is already log2 transformed
 
-    -   Means of cell type specific gene expression is already calculated and stored within RNA columns
+#Important note on removing NAs:
+#NAs compose 22.64% of the total values for clean_3, however drop_na() removes ANY rows containing NAs
+#Therefore a substantial data loss is obtained and data analysis should be conducted with caution
 
--   There are 3 overall classes of column names:
+rows_in_dirty <- nrow(dirty_3) #11062 entries
+rows_in_clean <- nrow(clean_3) #19501 entries
 
-    -   Gene name
 
-    -   Cell type
+pct_lost <- (rows_in_dirty - rows_in_clean) / rows_in_dirty *100
 
-    -   RNA mean
+print(
+  paste("The total % of lost rows are", round(pct_lost, 2))
+```
 
--   Within the cell type category, the following cells are stored
+Analysing 0 values within the dataset:
 
-    -   Oligodendrocytes (div1_1-1_3 + div 2_5 1-3 + div 4 1-3)
+```{r}
+zeros_03 <- clean_3 |> 
+  select(where(is.numeric)) |> 
+  summarise(across(everything(), function(x) mean(x == 0))
+  )
 
-    -   Adult microglia 1-3
+zeros_03
 
-    -   Atrocytes 1-3
-
-    -   Cortical neurons div05 (1-3) + dig 10 (1-3)
-
--   RPKM (reads per kilobase of transcript per million mapped reads) is the unit used to measure gene expression of RNA
+#No zero values within the dataset
+```
 
 # Data 5
 
