@@ -33,11 +33,11 @@ Marianna
 
 ## Transcriptome density analysis
 
-```{r}
-knitr::include_graphics("../results/RNA_density_plot_celltype.png")
+-   This shows blablabla
 
-knitr::include_graphics("../results/RNA_density_plot_combined.png")
-```
+![](images/clipboard-1002329297.png)
+
+![](images/clipboard-3719894856.png)
 
 ## Marianna
 
