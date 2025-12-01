@@ -31,6 +31,8 @@ Marianna
 
 ## Overall workflow (including data cleaning)
 
+![](images/clipboard-1107948132.png)
+
 Renata
 
 Louise
