@@ -4,7 +4,7 @@ format: html
 editor: visual
 ---
 
-The expression data used in this project was retrieved from Supplementary tables 1, 2, 3, 5, and 17 of [*(Sharma et. al, 2015)*](https://www.nature.com/articles/nn.4160#Sec12)*.* Tables 1, 2, 5, and 17 collect protein expression data normalized as log LFQ intensity, a metric used to compare the abundance of the **same protein** across multiple samples or conditions.
+The expression data used in this project was retrieved from Supplementary tables 1, 2, 3, 5, and 17 of [*(Sharma et. al, 2015)*](https://www.nature.com/articles/nn.4160#Sec12)*.* Tables 1, 2, 5, and 17 collect protein expression data normalized as log LFQ intensity, a metric used to compare the abundance of the **same protein** across multiple samples or conditions. Table 3 presents RNA-sequencing data expressed in RPKM (Reads Per Kilobase of transcript per Million mapped reads). In tables 1, 2, 3, and 5, each of the main cell types (neurons, oligodendrocytes, microglia, and astrocytes) has three technical replicated. In case of cultures cells, oligodendrocytes and neurons are also repeated at different numbers of days in vitro (div).
 
 # Data 2 - Maria
 
