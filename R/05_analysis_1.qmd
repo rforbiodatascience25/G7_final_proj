@@ -242,8 +242,7 @@ plot_celltypes <- ggplot() +
     hjust = 1, vjust = 1, color = "blue", size = 3
   )
 
-plot_celltypes
-ggsave("../results/RNA_density_plot_celltype.png", plot_celltypes, dpi = 300)
+ggsave("../results/RNA_density_plot_celltype.png", plot_celltypes, dpi = 300,)
 ```
 
 ### Combined plot
@@ -278,6 +277,5 @@ plot_combined <- ggplot() +
     hjust = 1, vjust = 1, color = "blue", size = 3
   )
 
-plot_combined
-ggsave("../results/RNA_density_plot_combined.png", plot_celltypes, dpi = 300)
+ggsave("../results/RNA_density_plot_combined.png", plot_combined, dpi = 300)
 ```
