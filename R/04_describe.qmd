@@ -4,6 +4,10 @@ format: html
 editor: visual
 ---
 
+```{r}
+library("tidyverse")
+```
+
 The expression data used in this project was retrieved from Supplementary tables 2, 3, 5, and 17 of [*(Sharma et. al, 2015)*](https://www.nature.com/articles/nn.4160#Sec12)*.* Tables 2, 5, and 17 collect protein expression data normalized as log LFQ intensity, a metric used to compare the abundance of the **same protein** across multiple samples or conditions. Table 3 presents RNA-sequencing data expressed in RPKM (Reads Per Kilobase of transcript per Million mapped reads). In tables 2, 3, and 5, each of the main cell types (neurons, oligodendrocytes, microglia, and astrocytes) has three technical replicated. In case of cultures cells, oligodendrocytes and neurons are also repeated at different numbers of days in vitro (div).
 
 # Data 2
@@ -33,6 +37,8 @@ This augmented dataset enables identification of **cell-type enriched proteins**
 If we compute the proportion of NAs, we get that more than a third of the data is formed by NAs. However, they are not removed at this point, because we re interested in the differences across cell types. When the difference across cell types (log fold change) is NA, is then removed.
 
 ```{r}
+clean_2 <- read_tsv(file="../data/clean_data/clean_2.tsv")
+
 missing <- clean_2 |> 
   select(where(is.numeric)) |> 
   summarise(across(everything(), ~ mean(is.na(.x))))
@@ -45,9 +51,8 @@ missing
 The data from table 3 is a RNA sequence expression matrix, containing RPKM values for RNA transcriptome data. The data is obtained from purified mouse brain cell types. The `clean_3` data frame contains 11.062 gene entries, across 21 different cell type samples.
 
 ```{r}
-{r}
 clean_3 <- read_tsv(file = "../data/clean_data/clean_3.tsv", show_col_types = FALSE)
-dirty_3 <- read_tsv(file = "../data/clean_data/dirty_3.tsv", show_col_types = FALSE)
+dirty_3 <- read_tsv(file = "../data/dirty_data/supp_3.tsv", show_col_types = FALSE)
 #colnames(clean_3)
 #dim(clean_3)
 
@@ -171,6 +176,7 @@ table(sub("_[^_]+$", "", names(clean_5)[sapply(clean_5, is.numeric)]))
 # Data 17
 
 ```{r}
+clean_17 <- read_tsv(file = "../data/clean_data/clean_17.tsv")
 head(clean_17)
 ```
 
