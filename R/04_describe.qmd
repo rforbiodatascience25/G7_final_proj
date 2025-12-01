@@ -45,9 +45,9 @@ missing
 The data from table 3 is a RNA sequence expression matrix, containing RPKM values for RNA transcriptome data. The data is obtained from purified mouse brain cell types. The `clean_3` data frame contains 11.062 gene entries, across 21 different cell type samples.
 
 ```{r}
+{r}
 clean_3 <- read_tsv(file = "../data/clean_data/clean_3.tsv", show_col_types = FALSE)
-
-dirty_3 <- read_tsv(file = "../data/dirty_data/supp_3.tsv", show_col_types = FALSE)
+dirty_3 <- read_tsv(file = "../data/clean_data/dirty_3.tsv", show_col_types = FALSE)
 #colnames(clean_3)
 #dim(clean_3)
 
@@ -56,14 +56,15 @@ dirty_3 <- read_tsv(file = "../data/dirty_data/supp_3.tsv", show_col_types = FAL
 #NAs compose 22.64% of the total values for clean_3, however drop_na() removes ANY rows containing NAs
 #Therefore a substantial data loss is obtained and data analysis should be conducted with caution
 
-rows_in_dirty <- nrow(dirty_3) #11062 entries
-rows_in_clean <- nrow(clean_3) #19501 entries
+rows_in_dirty <- nrow(dirty_3) #19501 entries
+rows_in_clean <- nrow(clean_3) #11062 entries
 
 
 pct_lost <- (rows_in_dirty - rows_in_clean) / rows_in_dirty *100
 
 print(
   paste("The total % of lost rows are", round(pct_lost, 2))
+)
 ```
 
 Analysing 0 values within the dataset:
