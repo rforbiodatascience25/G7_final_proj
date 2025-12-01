@@ -25,9 +25,9 @@ source("../R/99_proj_func.R")
 
 Marianna
 
-# Materials & Methods
+##  
 
-![](images/clipboard-1107948132.png){width="2993"}
+![](images/clipboard-1107948132.png){width="3600"}
 
 # Results
 
@@ -35,7 +35,7 @@ Marianna
 
 ## Marianna
 
-![](images/Screenshot 2025-12-01 at 19.58.33.png)
+![](images/Screenshot%202025-12-01%20at%2019.58.33.png){width="4000"}
 
 ## Correlation Heatmap
 
@@ -236,8 +236,14 @@ PCA_plot
 
 # Conclusion
 
--   **Transcriptomics != Proteomics**
+-   **Transcriptomics ≠ Proteomics**
 
--   **Proteomic diversity across brain regions**
+    -   Most abundant transcripts and the most abundant proteins often do not correlate
+
+-   **Proteomics provides valuable insights**
+
+    -   Different proteomic profiles depending on cell type / brain region
 
 -   **Why is this important?**
+
+    -   mRNA results don't translate into real world proteomic profiles
