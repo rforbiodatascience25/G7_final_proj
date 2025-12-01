@@ -1,6 +1,6 @@
 ---
-title: "Group 7 Final project"
-subtitle: "Cell-type and brain region-resolved mouse proteome"
+title: "Group 7 project"
+subtitle: "Cell-type and brain region-resolved mouse proteome - Sharma et al. 2015"
 format:
   revealjs:
     slide-number: true
@@ -42,11 +42,7 @@ source("../R/99_proj_func.R")
 
 ## Transcriptome density analysis
 
--   This shows blablabla
-
-![](images/clipboard-1002329297.png)
-
-![](images/clipboard-3719894856.png)
+![](images/clipboard-1255138101.png){width="4000"}
 
 ## Data validation: replicates correlation
 
