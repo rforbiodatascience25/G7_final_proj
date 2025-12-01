@@ -10,7 +10,7 @@ edtiro: visual
 library("tidyverse")
 library("dplyr")
 library("janitor")
-s
+
 source("../R/99_proj_func.R")
 ```
 
@@ -166,20 +166,11 @@ NA_check(clean_17 |>
 
 # Writing clean data to tables
 
-Table 2 was separated in different ones to make data analysis easier, as not all data is necessary for all further plotting.
-
 ```{r}
 #Create directory in case it doesn't exist already 
 dir.create("../data/clean_data", recursive = TRUE, showWarnings = FALSE)
 
 write_tsv(clean_2, "../data/clean_data/clean_2.tsv")
-
-write_tsv(clean_2_brain_regions, "../data/clean_data/clean_2_brain_regions.tsv")
-
-write_tsv(clean_2_cerebellum_development, "../data/clean_data/
-          clean_2_cerebellum_development.tsv")
-
-write_tsv(clean_2_isolated_cells, "../data/clean_data/clean_2_isolated_cells.tsv")
 
 write_tsv(clean_3, "../data/clean_data/clean_3.tsv")
 
