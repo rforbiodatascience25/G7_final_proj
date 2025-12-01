@@ -1,0 +1,16 @@
+---
+title: "alltest"
+format: html
+editor: visual
+---
+
+Library
+
+```{r}
+library("knitr")
+```
+
+```{r}
+#| child:
+#| - "01_load.qmd"
+```

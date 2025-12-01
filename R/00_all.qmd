@@ -4,6 +4,18 @@ format: html
 editor: visual
 ---
 
+library
+
+```{r}
+library("knitr")
+```
+
+```{r}
+#|child:
+#| - "01_load.qmd"
+
+```
+
 # Introduction to the project
 
 ### Plotting the log2 change in gene expression across cell types
