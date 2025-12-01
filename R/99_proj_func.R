@@ -84,10 +84,10 @@ cluster_cor_mat <- function(cor_mat) {
 
 ## Function to plot rank-rank comparison with specific set of genes
 plot_rank_rank_comparison <- function(
-    marker_list,        # Vector of gene names to highlight
-    cell_type_name,     # String for the plot title (e.g., "Astrocyte")
-    use_density = FALSE,# Boolean: TRUE to use density contours, FALSE for scatter plot
-    plot_limit = 5000   # Maximum rank limit for both axes (removes top artifact)
+    marker_list,         # vector of marker genes
+    cell_type_name,      # string with the cell-type name
+    use_density = FALSE, # boolean: TRUE to apply density contours
+    plot_limit = 5000    # limit for both axes
 ) {
   
   marker_data <- merged_ranked |>
@@ -123,8 +123,8 @@ plot_rank_rank_comparison <- function(
     
     labs(
       title = paste("Rank-Rank Comparison:", cell_type_name, "RNA vs. Protein"),
-      x = "RNA Rank (Low Rank = High Expression)",
-      y = "Protein Rank (Low Rank = High Abundance)"
+      x = "RNA rank (Low rank = High expression)",
+      y = "Protein rank (Low rank = High abundance)"
     ) +
     theme_minimal() +
     theme(plot.title = element_text(hjust = 0.5))
